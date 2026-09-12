@@ -1,0 +1,19 @@
+# Virtual environment (lives outside this folder anyway, but ignore just in case)
+venv/
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Auto-generated EDA charts (regenerate anytime by running main.py)
+Dataset_bkp/
+
+# Large dataset file — keep it locally, don't push to GitHub
+# (GitHub free repos have a 100MB hard file limit; if your CSV is close to
+# that, exclude it and instead note the Kaggle download link in your README)
+Dataset/*.csv
+
+# OS/editor junk
+.DS_Store
+.vscode/.idea/
