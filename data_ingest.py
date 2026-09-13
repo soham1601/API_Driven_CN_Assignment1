@@ -16,6 +16,8 @@ logger = logging.getLogger(__name__)
 # a GCP VM, or inside a Prefect worker — no hardcoded absolute paths.
 BASE_DIR = Path(__file__).resolve().parent
 DEFAULT_DATA_PATH = BASE_DIR / "Dataset" / "hotel_bookings.csv"
+REPORTS_DIR = BASE_DIR / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
 
 # Optional override: set an environment variable DATA_PATH if you ever need
 # to point at a different location without touching the code, e.g. on a VM:
@@ -47,12 +49,30 @@ def load_data(path: Path = None) -> pd.DataFrame:
 
 def get_basic_info(df: pd.DataFrame) -> None:
     """
-    Print/log a quick snapshot of the ingested data — useful for the
-    'display application/data details' part of your Word doc.
+    Print/log a quick snapshot of the ingested data, AND save it to a text
+    file (reports/dataset_overview.txt) so there is a clean, persistent
+    artifact to open and screenshot for the Word document — rather than
+    relying on terminal scrollback.
     """
     logger.info(f"Rows: {df.shape[0]}, Columns: {df.shape[1]}")
     logger.info(f"Column names: {list(df.columns)}")
     print(df.head())
+
+    lines = []
+    lines.append("DATASET OVERVIEW")
+    lines.append("=" * 50)
+    lines.append(f"Shape: {df.shape[0]} rows, {df.shape[1]} columns")
+    lines.append("")
+    lines.append("Column names:")
+    lines.append(", ".join(df.columns))
+    lines.append("")
+    lines.append("First 5 rows (df.head()):")
+    lines.append("-" * 50)
+    lines.append(df.head().to_string())
+
+    with open(REPORTS_DIR / "dataset_overview.txt", "w") as f:
+        f.write("\n".join(lines))
+    logger.info("Dataset overview saved to reports/dataset_overview.txt")
 
 
 if __name__ == "__main__":

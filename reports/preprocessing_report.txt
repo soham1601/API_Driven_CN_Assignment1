@@ -1,0 +1,92 @@
+PREPROCESSING SUMMARY REPORT
+==================================================
+
+Shape before preprocessing: 119390 rows, 32 columns
+Shape after preprocessing:  87396 rows, 33 columns
+
+SUMMARY STATISTICS (transposed: one row per column, for readability)
+--------------------------------------------------
+                                   count unique         top    freq         mean         std     min     25%     50%     75%     max
+hotel                             119390      2  City Hotel   79330          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+is_canceled                       119390      2          no   75166          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+lead_time                       119390.0    NaN         NaN     NaN   104.011416  106.863097     0.0    18.0    69.0   160.0   737.0
+arrival_date_year               119390.0    NaN         NaN     NaN  2016.156554    0.707476  2015.0  2016.0  2016.0  2017.0  2017.0
+arrival_date_month                119390     12      August   13877          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+arrival_date_week_number        119390.0    NaN         NaN     NaN    27.165173   13.605138     1.0    16.0    28.0    38.0    53.0
+arrival_date_day_of_month       119390.0    NaN         NaN     NaN    15.798241    8.780829     1.0     8.0    16.0    23.0    31.0
+stays_in_weekend_nights         119390.0    NaN         NaN     NaN     0.927599    0.998613     0.0     0.0     1.0     2.0    19.0
+stays_in_week_nights            119390.0    NaN         NaN     NaN     2.500302    1.908286     0.0     1.0     2.0     3.0    50.0
+adults                          119390.0    NaN         NaN     NaN     1.856403    0.579261     0.0     2.0     2.0     2.0    55.0
+children                        119386.0    NaN         NaN     NaN      0.10389    0.398561     0.0     0.0     0.0     0.0    10.0
+babies                          119390.0    NaN         NaN     NaN     0.007949    0.097436     0.0     0.0     0.0     0.0    10.0
+meal                              119390      5          BB   92310          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+country                           118902    177         PRT   48590          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+market_segment                    119390      8   Online TA   56477          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+distribution_channel              119390      5       TA/TO   97870          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+is_repeated_guest               119390.0    NaN         NaN     NaN     0.031912    0.175767     0.0     0.0     0.0     0.0     1.0
+previous_cancellations          119390.0    NaN         NaN     NaN     0.087118    0.844336     0.0     0.0     0.0     0.0    26.0
+previous_bookings_not_canceled  119390.0    NaN         NaN     NaN     0.137097    1.497437     0.0     0.0     0.0     0.0    72.0
+reserved_room_type                119390     10           A   85994          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+assigned_room_type                119390     12           A   74053          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+booking_changes                 119390.0    NaN         NaN     NaN     0.221124    0.652306     0.0     0.0     0.0     0.0    21.0
+deposit_type                      119390      3  No Deposit  104641          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+agent                           103050.0    NaN         NaN     NaN    86.693382  110.774548     1.0     9.0    14.0   229.0   535.0
+company                           6797.0    NaN         NaN     NaN   189.266735  131.655015     6.0    62.0   179.0   270.0   543.0
+days_in_waiting_list            119390.0    NaN         NaN     NaN     2.321149   17.594721     0.0     0.0     0.0     0.0   391.0
+customer_type                     119390      4   Transient   89613          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+adr                             119390.0    NaN         NaN     NaN   101.831122    50.53579   -6.38   69.29  94.575   126.0  5400.0
+required_car_parking_spaces     119390.0    NaN         NaN     NaN     0.062518    0.245291     0.0     0.0     0.0     0.0     8.0
+total_of_special_requests       119390.0    NaN         NaN     NaN     0.571363    0.792798     0.0     0.0     0.0     1.0     5.0
+reservation_status                119390      3   Check-Out   75166          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+reservation_status_date           119390    926  10/21/2015    1461          NaN         NaN     NaN     NaN     NaN     NaN     NaN
+
+COLUMN DATA TYPES
+--------------------------------------------------
+hotel                              object
+is_canceled                        object
+lead_time                           int64
+arrival_date_year                   int64
+arrival_date_month                 object
+arrival_date_week_number            int64
+arrival_date_day_of_month           int64
+stays_in_weekend_nights             int64
+stays_in_week_nights                int64
+adults                              int64
+children                          float64
+babies                              int64
+meal                               object
+country                            object
+market_segment                     object
+distribution_channel               object
+is_repeated_guest                   int64
+previous_cancellations              int64
+previous_bookings_not_canceled      int64
+reserved_room_type                 object
+assigned_room_type                 object
+booking_changes                     int64
+deposit_type                       object
+agent                             float64
+company                           float64
+days_in_waiting_list                int64
+customer_type                      object
+adr                               float64
+required_car_parking_spaces         int64
+total_of_special_requests           int64
+reservation_status                 object
+reservation_status_date            object
+
+MISSING VALUES (before imputation)
+--------------------------------------------------
+children         4
+country        488
+agent        16340
+company     112593
+
+DUPLICATE ROWS
+--------------------------------------------------
+Found 31994 exact duplicate rows (26.8% of the dataset).
+These were removed before any further analysis, to avoid the train/test leakage issue described in our report.
+
+INVALID BOOKINGS
+--------------------------------------------------
+Flagged 166 bookings with zero total guests (adults + children + babies == 0) via the 'is_valid_booking' column.

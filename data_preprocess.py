@@ -2,14 +2,24 @@
 data_preprocess.py
 Responsible for Activity 1.3: summary statistics, missing-value handling,
 dtype inspection, and normalization.
+
+All of this ALSO gets written to a plain-text report file (see
+write_preprocessing_report below) so there is something you can open once
+and screenshot cleanly for the Word document, instead of scrolling back
+through terminal output that may have already scrolled past.
 """
 
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 import logging
+from pathlib import Path
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 logger = logging.getLogger(__name__)
+
+BASE_DIR = Path(__file__).resolve().parent
+REPORTS_DIR = BASE_DIR / "reports"
+REPORTS_DIR.mkdir(exist_ok=True)
 
 
 def show_summary_statistics(df: pd.DataFrame) -> pd.DataFrame:
@@ -135,6 +145,62 @@ def normalize_numeric_columns(df: pd.DataFrame, columns: list = None) -> pd.Data
     return df
 
 
+def write_preprocessing_report(shape_before, shape_after, summary, dtypes, missing,
+                                dup_count, dup_pct, invalid_count) -> None:
+    """
+    Writes one consolidated, human-readable text file covering everything
+    checked during preprocessing: shape, summary statistics, data types,
+    missing values, duplicates found/removed, and invalid bookings flagged.
+    Open this file once and screenshot it — this is the cleanest evidence
+    for the Word document, rather than relying on terminal scrollback.
+    """
+    lines = []
+    lines.append("PREPROCESSING SUMMARY REPORT")
+    lines.append("=" * 50)
+    lines.append("")
+    lines.append(f"Shape before preprocessing: {shape_before[0]} rows, {shape_before[1]} columns")
+    lines.append(f"Shape after preprocessing:  {shape_after[0]} rows, {shape_after[1]} columns")
+    lines.append("")
+
+    lines.append("SUMMARY STATISTICS (transposed: one row per column, for readability)")
+    lines.append("-" * 50)
+    lines.append(summary.transpose().to_string())
+    lines.append("")
+
+    lines.append("COLUMN DATA TYPES")
+    lines.append("-" * 50)
+    lines.append(dtypes.to_string())
+    lines.append("")
+
+    lines.append("MISSING VALUES (before imputation)")
+    lines.append("-" * 50)
+    missing_nonzero = missing[missing > 0]
+    if missing_nonzero.empty:
+        lines.append("No missing values found.")
+    else:
+        lines.append(missing_nonzero.to_string())
+    lines.append("")
+
+    lines.append("DUPLICATE ROWS")
+    lines.append("-" * 50)
+    lines.append(f"Found {dup_count} exact duplicate rows ({dup_pct}% of the dataset).")
+    lines.append(f"These were removed before any further analysis, to avoid the "
+                  f"train/test leakage issue described in our report.")
+    lines.append("")
+
+    lines.append("INVALID BOOKINGS")
+    lines.append("-" * 50)
+    lines.append(f"Flagged {invalid_count} bookings with zero total guests "
+                  f"(adults + children + babies == 0) via the 'is_valid_booking' column.")
+    lines.append("")
+
+    report_text = "\n".join(lines)
+    with open(REPORTS_DIR / "preprocessing_report.txt", "w") as f:
+        f.write(report_text)
+
+    logger.info("Preprocessing report saved to reports/preprocessing_report.txt")
+
+
 def preprocess_pipeline(df: pd.DataFrame, drop_duplicates: bool = True) -> pd.DataFrame:
     """
     Orchestrator: runs stats/dtype/missing-value/duplicate checks and
@@ -145,15 +211,26 @@ def preprocess_pipeline(df: pd.DataFrame, drop_duplicates: bool = True) -> pd.Da
     Call normalize_numeric_columns() separately, after EDA, purely to
     demonstrate the normalization requirement for the Word doc.
     """
-    show_summary_statistics(df)
-    show_data_types(df)
-    check_missing_values(df)
-    check_duplicates(df)
+    shape_before = df.shape
+
+    summary = show_summary_statistics(df)
+    dtypes = show_data_types(df)
+    missing = check_missing_values(df)
+    dup_count = check_duplicates(df)
+    dup_pct = round(100 * dup_count / len(df), 2)
+
     if drop_duplicates:
         df = remove_duplicates(df)
     df = impute_missing_numeric(df)
     df = impute_missing_categorical(df)
     df = flag_invalid_bookings(df)
+
+    invalid_count = int((df["is_valid_booking"] == 0).sum()) if "is_valid_booking" in df.columns else 0
+    shape_after = df.shape
+
+    write_preprocessing_report(shape_before, shape_after, summary, dtypes, missing,
+                                dup_count, dup_pct, invalid_count)
+
     logger.info("Preprocessing (clean/impute) complete — call normalize_numeric_columns() separately")
     return df
 
