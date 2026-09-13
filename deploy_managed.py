@@ -16,7 +16,7 @@ it automatically every 2 minutes, with no worker process needed anywhere.
 from prefect import flow
 
 # TODO: update this to your actual GitHub repo URL
-GITHUB_REPO_URL = "https://github.com/soham1601/API_Driven_CN_Assignment1.git"
+GITHUB_REPO_URL = "https://github.com/mathurd96/API_Driven_CN_Assignment1.git"
 
 if __name__ == "__main__":
     flow.from_source(
